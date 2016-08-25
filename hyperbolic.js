@@ -246,8 +246,8 @@
       s = 1.0 / this.a.norm();
       this.a = this.a.scale(s);
       this.b = this.b.scale(s);
-      this.c = this.b.divide(this.a).conjugate();
-      this.d = new Complex(1.0, 0.0);
+      this.c = this.c.scale(s);
+      this.d = this.d.scale(s);
       return this;
     };
 

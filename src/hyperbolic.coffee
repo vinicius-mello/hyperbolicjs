@@ -197,8 +197,8 @@ class Isometry extends Moebius
         s= 1.0/@a.norm()
         @a=@a.scale(s)
         @b=@b.scale(s)
-        @c=@b.divide(@a).conjugate()
-        @d=new Complex(1.0,0.0)
+        @c=@c.scale(s)
+        @d=@d.scale(s)
         return this
 
 
