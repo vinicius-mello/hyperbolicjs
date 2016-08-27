@@ -405,6 +405,7 @@ root.Complex = Complex
 root.Moebius = Moebius
 root.Isometry = Isometry
 root.segmentSVG = segmentSVG
+root.reflect = reflect
 root.circle = circle
 root.perpBisectorSVG = perpBisectorSVG
 root.perpBisectorHalfPlaneSVG = perpBisectorHalfPlaneSVG
