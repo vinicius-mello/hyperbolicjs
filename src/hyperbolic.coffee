@@ -1,5 +1,10 @@
 class Complex
+
     constructor: (@x=0.0, @y=0.0) ->
+
+    @zero: new Complex(0.0,0.0)
+    @one: new Complex(1.0,0.0)
+    @i: new Complex(0.0,1.0)
 
     plus: (w) ->
         new Complex(
@@ -74,59 +79,38 @@ class Complex
     norm2: ->
         @x*@x + @y*@y
 
-    toString: ->
-        return "#{@x.toFixed(6)}" if @y == 0.0
-        return "#{@y.toFixed(6)}i" if @x == 0.0
-        if @y > 0
-            "#{@x.toFixed(6)}+#{@y.toFixed(6)}i"
-        else
-            "#{@x.toFixed(6)}-#{(-1.0 * @y).toFixed(6)}i"
+    @precision: 6
 
-class Moebius
+    toString: ->
+        pre = Complex.precision
+        return "#{@x.toFixed(pre)}" if @y == 0.0
+        return "#{@y.toFixed(pre)}i" if @x == 0.0
+        if @y > 0
+            "#{@x.toFixed(pre)}+#{@y.toFixed(pre)}i"
+        else
+            "#{@x.toFixed(pre)}-#{(-1.0 * @y).toFixed(pre)}i"
+
+
+class Isometry
+
     constructor: (m) ->
         if typeof m is "object"
             @a = m.a
             @b = m.b
             @c = m.c
             @d = m.d
+            @orientation = m.orientation
         else
-            @a = new Complex(1.0,0.0)
-            @b = new Complex(0.0,0.0)
-            @c = new Complex(0.0,0.0)
-            @d = new Complex(1.0,0.0)
-
-    apply: (z) ->
-        z.times(@a).plus(@b).divide(z.times(@c).plus(@d))
-
-    applyInv: (z) ->
-        z.times(@d).minus(@b).divide(@a.minus(z.times(@c)))
-
-    compose: (m) ->
-        t = new Moebius()
-        t.a = @a.times(m.a).plus(@b.times(m.c))
-        t.b = @a.times(m.b).plus(@b.times(m.d))
-        t.c = @c.times(m.a).plus(@d.times(m.c))
-        t.d = @c.times(m.b).plus(@d.times(m.d))
-        return t
-
-    conjugate: ->
-        t = new Moebius()
-        t.a = @a.conjugate()
-        t.b = @b.conjugate()
-        t.c = @c.conjugate()
-        t.d = @d.conjugate()
-        return t
-
-class Isometry extends Moebius
-    orientation: 1.0
-
-    constructor: ->
-        super()
+            @a = Complex.one
+            @b = Complex.zero
+            @c = Complex.zero
+            @d = Complex.one
+            @orientation = 1.0
 
     apply: (z) ->
         if @orientation<0
             z = z.conjugate()
-        return super(z)
+        return z.times(@a).plus(@b).divide(z.times(@c).plus(@d))
 
     compose: (m) ->
         if @orientation<0
@@ -139,9 +123,18 @@ class Isometry extends Moebius
         t.orientation = @orientation * m.orientation
         return t
 
+    conjugate: ->
+        t = new Isometry()
+        t.a = @a.conjugate()
+        t.b = @b.conjugate()
+        t.c = @c.conjugate()
+        t.d = @d.conjugate()
+        t.orientation = @orientation
+        return t
+
     @translate0: (a) ->
         t = new Isometry()
-        t.a = new Complex(1.0,0.0)
+        t.a = Complex.one
         t.b = a.negation()
         t.c = t.b.conjugate()
         t.d = t.a
@@ -168,12 +161,12 @@ class Isometry extends Moebius
                 e = a.normalized()
         t = new Isometry()
         t.a = e
-        t.b = new Complex(0.0,0.0)
+        t.b = Complex.zero
         t.c = t.b
-        t.d = new Complex(1.0,0.0)
+        t.d = Complex.one
         return t
 
-    @reflect: (a,b) ->
+    @reflect: (p,q) ->
         t = new Isometry()
         t.orientation = -1.0
         if isCollinear0(p,q)
@@ -183,15 +176,15 @@ class Isometry extends Moebius
             else
                 t.a = p.divide(p.conjugate())
                 return t
-        l = line(a,b)
+        l = line(p,q)
+        [a, b] = l
         ce = lineCenter(l)
         r2 = ce.minus(a).norm2()
-        [a, b] = l
         t.a = ce
         t.b = new Complex(r2-ce.norm2(),0.0)
-        t.c = new Complex(1.0,0.0)
-        t.d = ce.negation()
-        return t.force()
+        t.c = Complex.one
+        t.d = ce.conjugate().negation()
+        return t
 
     force: ->
         s= 1.0/@a.norm()
@@ -219,12 +212,12 @@ toDisc = (z) ->
         return z
 
 translate0 = (a,z) ->
-    w = new Complex(1.0,0.0)
+    w = Complex.one
     w = z.minus(a).divide(w.minus(z.times(a.conjugate())))
     return w
 
 translate0Inv = (a,z) ->
-    w = new Complex(1.0,0.0)
+    w = Complex.one
     w = z.plus(a).divide(w.plus(z.times(a.conjugate())))
     return w
 
@@ -319,7 +312,7 @@ ray = (p,q) ->
     return [p, b]
 
 distance = (z,w) ->
-    one = new Complex(1.0,0.0)
+    one = Complex.one
     return 2.0*Math.atanh((z.minus(w).divide(one.minus(z.times(w.conjugate())))).norm())
 
 regularPolygon = (c,v,n) ->
@@ -340,7 +333,10 @@ acosh = (x) ->
 
 segmentSVG = (p,q,move=true) ->
     if isCollinear0(p,q)
-        return "M#{p.x},#{p.y} L#{q.x},#{q.y}"
+        str = "L#{q.x},#{q.y}"
+        if move
+            str = "M#{p.x},#{p.y} "+str
+        return str
     l = line(p,q)
     ce = lineCenter(l)
     r = ce.minus(p).norm()
@@ -350,6 +346,9 @@ segmentSVG = (p,q,move=true) ->
         str = "M#{p.x},#{p.y} "+str
     return str
 
+circleSVG = (O,R)->
+    [o,r] = circle(O,R)
+    return "M #{o.x} #{o.y} m -#{r}, 0 a #{r},#{r} 0 1,0 #{r * 2},0 a #{r},#{r} 0 1,0 #{-(r * 2)},0"
 
 perpBisectorSVG = (p,q) ->
     [a, b] = perpBisector(p,q)
@@ -357,15 +356,19 @@ perpBisectorSVG = (p,q) ->
 
 perpBisectorHalfPlaneSVG = (p,q) ->
     [a, b] = perpBisector(p,q)
-    zero = new Complex(0.0,0.0)
+    zero = Complex.zero
     flag = if sArea(a,b,zero)<0 then 1 else 0
     return segmentSVG(a,b)+" A 1.0,1.0 0 #{flag},0 #{a.x},#{a.y}Z"
 
-regularPolygonSVG = (c,v,n) ->
-    vs = regularPolygon(c,v,n)
+polygonSVG = (vs) ->
+    n = vs.length
     p = vs[0]
     path = (segmentSVG(vs[i],vs[(i+1)%n],false) for i in [0...n])
     return "M#{p.x},#{p.y}"+path.join("")+"Z"
+
+regularPolygonSVG = (c,v,n) ->
+    vs = regularPolygon(c,v,n)
+    return polygonSVG(vs)
 
 randomPoint = (R) ->
     th = 2.0 * Math.PI * Math.random()
@@ -374,11 +377,46 @@ randomPoint = (R) ->
     r = Math.tanh(r/2.0)
     return new Complex(r*Math.cos(th), r*Math.sin(th))
 
+regularTilingRadius = (n,m)->
+    alpha = Math.PI/n
+    beta = Math.PI/m
+    chc = 1.0/(Math.tan(alpha)*Math.tan(beta))
+    len = Math.sqrt(chc*chc-1.0)/(1.0+chc)
+    return len
+
+regularTiling = (n,m,stop)->
+
+    reflectSide = (poly,vs,i)->
+        {c: c, v: v, t: t} = poly
+        p = vs[i]
+        q = vs[(i+1)%n]
+        nt = Isometry.reflect(p,q)
+        { c: reflect(p,q,c), v: p, t: nt.compose(t) }
+
+    len = regularTilingRadius(n,m)
+    tovisit = [ { c: Complex.zero, v: new Complex(len,0.0), t: new Isometry() } ]
+
+    visited = d3.set()
+    polygons = []
+
+    while tovisit.length>0
+        p = tovisit.shift()
+        if !visited.has(p.c)
+            visited.add(p.c)
+            if !stop(p)
+                polygons.push(p)
+                vs = regularPolygon(p.c,p.v,n)
+                for i in [0...n]
+                    tovisit.push(reflectSide(p,vs,i))
+
+    return polygons
+
+
 delaunayEmbedding = (root) ->
     delaunayEmbeddingRec(root,0,new Isometry())
 
 delaunayEmbeddingRec = (node, alpha, m) ->
-    zero = new Complex(0.0,0.0)
+    zero = Complex.zero
     z = m.apply(zero)
     node.x = z.x
     node.y = z.y
@@ -402,9 +440,9 @@ delaunayEmbeddingRec = (node, alpha, m) ->
 
 root = self.hyperbolic ?= {}
 root.Complex = Complex
-root.Moebius = Moebius
 root.Isometry = Isometry
 root.segmentSVG = segmentSVG
+root.circleSVG = circleSVG
 root.reflect = reflect
 root.circle = circle
 root.perpBisectorSVG = perpBisectorSVG
@@ -412,6 +450,9 @@ root.perpBisectorHalfPlaneSVG = perpBisectorHalfPlaneSVG
 root.randomPoint = randomPoint
 root.regularPolygon = regularPolygon
 root.regularPolygonSVG = regularPolygonSVG
+root.polygonSVG = polygonSVG
 root.distance = distance
-Math.asinh = asinh
+root.regularTiling = regularTiling
+root.regularTilingRadius = regularTilingRadius
 root.delaunayEmbedding = delaunayEmbedding
+Math.asinh = asinh
