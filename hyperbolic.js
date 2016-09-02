@@ -83,22 +83,30 @@
       return this.x * this.x + this.y * this.y;
     };
 
+    Complex.setPrecision = function(n) {
+      Complex.precision = n;
+      Complex.precisionStr1 = '0.' + '0'.repeat(n);
+      return Complex.precisionStr2 = '-' + Complex.precisionStr1;
+    };
+
     Complex.precision = 6;
 
+    Complex.precisionStr1 = '0.000000';
+
+    Complex.precisionStr2 = '-0.000000';
+
     Complex.prototype.toString = function() {
-      var pre;
+      var nx, ny, pre;
       pre = Complex.precision;
-      if (this.y === 0.0) {
-        return "" + (this.x.toFixed(pre));
+      nx = this.x.toFixed(pre);
+      if (nx === Complex.precisionStr2) {
+        nx = Complex.precisionStr1;
       }
-      if (this.x === 0.0) {
-        return (this.y.toFixed(pre)) + "i";
+      ny = this.y.toFixed(pre);
+      if (ny === Complex.precisionStr2) {
+        ny = Complex.precisionStr1;
       }
-      if (this.y > 0) {
-        return (this.x.toFixed(pre)) + "+" + (this.y.toFixed(pre)) + "i";
-      } else {
-        return (this.x.toFixed(pre)) + "-" + ((-1.0 * this.y).toFixed(pre)) + "i";
-      }
+      return "(" + nx + "," + ny + ")";
     };
 
     return Complex;

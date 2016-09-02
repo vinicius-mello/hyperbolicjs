@@ -79,16 +79,22 @@ class Complex
     norm2: ->
         @x*@x + @y*@y
 
+    @setPrecision: (n)->
+        Complex.precision = n
+        Complex.precisionStr1 = '0.'+'0'.repeat(n)
+        Complex.precisionStr2 = '-'+Complex.precisionStr1
     @precision: 6
-
+    @precisionStr1 : '0.000000'
+    @precisionStr2 : '-0.000000'
     toString: ->
         pre = Complex.precision
-        return "#{@x.toFixed(pre)}" if @y == 0.0
-        return "#{@y.toFixed(pre)}i" if @x == 0.0
-        if @y > 0
-            "#{@x.toFixed(pre)}+#{@y.toFixed(pre)}i"
-        else
-            "#{@x.toFixed(pre)}-#{(-1.0 * @y).toFixed(pre)}i"
+        nx = (@x).toFixed(pre)
+        if nx == Complex.precisionStr2
+            nx = Complex.precisionStr1
+        ny = (@y).toFixed(pre)
+        if ny == Complex.precisionStr2
+            ny = Complex.precisionStr1
+        "(#{nx},#{ny})"
 
 
 class Isometry
