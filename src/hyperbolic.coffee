@@ -376,10 +376,18 @@ regularPolygonSVG = (c,v,n) ->
     vs = regularPolygon(c,v,n)
     return polygonSVG(vs)
 
-randomPoint = (R) ->
+svg =
+    segment: segmentSVG
+    circle: circleSVG
+    perpBisector: perpBisectorSVG
+    perpBisectorHalfPlane: perpBisectorHalfPlaneSVG
+    polygon: polygonSVG
+    regularPolygon: regularPolygonSVG
+
+randomPoint = (R,alpha=1.0) ->
     th = 2.0 * Math.PI * Math.random()
     s = Math.random()
-    r = Math.acosh((Math.cosh(R)-1.0)*s + 1.0)
+    r = Math.acosh((Math.cosh(alpha*R)-1.0)*s + 1.0)/alpha
     r = Math.tanh(r/2.0)
     return new Complex(r*Math.cos(th), r*Math.sin(th))
 
@@ -475,6 +483,7 @@ root.randomPoint = randomPoint
 root.regularPolygon = regularPolygon
 root.regularPolygonSVG = regularPolygonSVG
 root.polygonSVG = polygonSVG
+root.svg = svg
 root.distance = distance
 root.regularTiling = regularTiling
 root.regularTilingRadius = regularTilingRadius
