@@ -451,25 +451,6 @@ delaunayEmbeddingRec = (node, alpha, m) ->
         child = node.children[i]
         delaunayEmbeddingRec(child,calpha,mm)
 
-simulatedAnnealing = (s, kmax, driver) ->
-    k = 0
-    Emin = E = driver.energy(s)
-    driver.save(s)
-    saIter =  ->
-        t = k/kmax
-        if t>=1.0
-            return 1.0
-        k = k+1
-        T = driver.temperature(t)
-        [dE, c] = driver.change(s)
-        if driver.accept(E,dE,T)>Math.random()
-            driver.move(c,s)
-            E = E+dE
-            if E<Emin
-                Emin = E
-                driver.save(s)
-        return t
-
 root = self.hyperbolic ?= {}
 root.Complex = Complex
 root.Isometry = Isometry
@@ -488,5 +469,4 @@ root.distance = distance
 root.regularTiling = regularTiling
 root.regularTilingRadius = regularTilingRadius
 root.delaunayEmbedding = delaunayEmbedding
-root.simulatedAnnealing = simulatedAnnealing
 Math.asinh = asinh
