@@ -462,7 +462,7 @@ simulatedAnnealing = (s, kmax, driver) ->
         k = k+1
         T = driver.temperature(t)
         [dE, c] = driver.change(s)
-        if driver.accept(dE,T)>Math.random()
+        if driver.accept(E,dE,T)>Math.random()
             driver.move(c,s)
             E = E+dE
             if E<Emin

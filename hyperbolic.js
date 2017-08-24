@@ -506,11 +506,14 @@
     regularPolygon: regularPolygonSVG
   };
 
-  randomPoint = function(R) {
+  randomPoint = function(R, alpha) {
     var r, s, th;
+    if (alpha == null) {
+      alpha = 1.0;
+    }
     th = 2.0 * Math.PI * Math.random();
     s = Math.random();
-    r = Math.acosh((Math.cosh(R) - 1.0) * s + 1.0);
+    r = Math.acosh((Math.cosh(alpha * R) - 1.0) * s + 1.0) / alpha;
     r = Math.tanh(r / 2.0);
     return new Complex(r * Math.cos(th), r * Math.sin(th));
   };
@@ -611,7 +614,7 @@
       k = k + 1;
       T = driver.temperature(t);
       ref = driver.change(s), dE = ref[0], c = ref[1];
-      if (driver.accept(dE, T) > Math.random()) {
+      if (driver.accept(E, dE, T) > Math.random()) {
         driver.move(c, s);
         E = E + dE;
         if (E < Emin) {
