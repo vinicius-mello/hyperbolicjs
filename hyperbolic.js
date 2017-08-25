@@ -530,15 +530,16 @@
   regularTiling = function(n, m, stop) {
     var i, j, len, p, polygons, ref, reflectSide, tovisit, visited, vs;
     reflectSide = function(poly, vs, i) {
-      var c, nt, p, q, t, v;
-      c = poly.c, v = poly.v, t = poly.t;
+      var c, hop, nt, p, q, t, v;
+      c = poly.c, v = poly.v, t = poly.t, hop = poly.hop;
       p = vs[i];
       q = vs[(i + 1) % n];
       nt = Isometry.reflect(p, q);
       return {
         c: reflect(p, q, c),
         v: p,
-        t: nt.compose(t)
+        t: nt.compose(t),
+        hop: hop + 1
       };
     };
     len = regularTilingRadius(n, m);
@@ -546,7 +547,8 @@
       {
         c: Complex.zero,
         v: new Complex(len, 0.0),
-        t: new Isometry()
+        t: new Isometry(),
+        hop: 0
       }
     ];
     visited = d3.set();

@@ -401,14 +401,14 @@ regularTilingRadius = (n,m)->
 regularTiling = (n,m,stop)->
 
     reflectSide = (poly,vs,i)->
-        {c: c, v: v, t: t} = poly
+        {c: c, v: v, t: t, hop: hop} = poly
         p = vs[i]
         q = vs[(i+1)%n]
         nt = Isometry.reflect(p,q)
-        { c: reflect(p,q,c), v: p, t: nt.compose(t) }
+        { c: reflect(p,q,c), v: p, t: nt.compose(t), hop: hop + 1 }
 
     len = regularTilingRadius(n,m)
-    tovisit = [ { c: Complex.zero, v: new Complex(len,0.0), t: new Isometry() } ]
+    tovisit = [ { c: Complex.zero, v: new Complex(len,0.0), t: new Isometry(), hop: 0 } ]
 
     visited = d3.set()
     polygons = []
