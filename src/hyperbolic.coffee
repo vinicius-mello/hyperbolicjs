@@ -423,6 +423,14 @@ regularTiling = (n,m,stop,adjacency=false)->
                 for i in [0...n]
                     tovisit.push(reflectSide(p,vs,i))
 
+    if adjacency
+        for p in polygons
+            vs = regularPolygon(p.c,p.v,n)
+            p.adjacency = []
+            for i in [0...n]
+                q = reflectSide(p,vs,i)
+                if visited.has(q.c)
+                    p.adjacency.push(visited.get(q.c))
     return polygons
 
 

@@ -528,7 +528,7 @@
   };
 
   regularTiling = function(n, m, stop, adjacency) {
-    var i, j, len, p, polygons, ref, reflectSide, tovisit, visited, vs;
+    var i, j, k, len, len1, p, polygons, q, ref, ref1, reflectSide, tovisit, u, visited, vs;
     if (adjacency == null) {
       adjacency = false;
     }
@@ -565,6 +565,19 @@
           vs = regularPolygon(p.c, p.v, n);
           for (i = j = 0, ref = n; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
             tovisit.push(reflectSide(p, vs, i));
+          }
+        }
+      }
+    }
+    if (adjacency) {
+      for (k = 0, len1 = polygons.length; k < len1; k++) {
+        p = polygons[k];
+        vs = regularPolygon(p.c, p.v, n);
+        p.adjacency = [];
+        for (i = u = 0, ref1 = n; 0 <= ref1 ? u < ref1 : u > ref1; i = 0 <= ref1 ? ++u : --u) {
+          q = reflectSide(p, vs, i);
+          if (visited.has(q.c)) {
+            p.adjacency.push(visited.get(q.c));
           }
         }
       }
