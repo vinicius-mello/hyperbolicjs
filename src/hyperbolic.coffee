@@ -423,7 +423,9 @@ regularTiling = (n,m,stop,adjacency=false)->
                 for i in [0...n]
                     tovisit.push(reflectSide(p,vs,i))
     if adjacency
+        console.log("1")
         for p in polygons
+            console.log("2")
             vs = regularPolygon(p.c,p.v,n)
             p.adjacency = []
             for i in [0...n]
