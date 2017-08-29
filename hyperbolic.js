@@ -527,8 +527,11 @@
     return len;
   };
 
-  regularTiling = function(n, m, stop) {
+  regularTiling = function(n, m, stop, adjacency) {
     var i, j, len, p, polygons, ref, reflectSide, tovisit, visited, vs;
+    if (adjacency == null) {
+      adjacency = false;
+    }
     reflectSide = function(poly, vs, i) {
       var c, hop, nt, p, q, t, v;
       c = poly.c, v = poly.v, t = poly.t, hop = poly.hop;
@@ -551,13 +554,13 @@
         hop: 0
       }
     ];
-    visited = d3.set();
+    visited = d3.map();
     polygons = [];
     while (tovisit.length > 0) {
       p = tovisit.shift();
       if (!visited.has(p.c)) {
-        visited.add(p.c);
         if (!stop(p)) {
+          visited.set(p.c, polygons.length);
           polygons.push(p);
           vs = regularPolygon(p.c, p.v, n);
           for (i = j = 0, ref = n; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {

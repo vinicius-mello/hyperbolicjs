@@ -398,7 +398,7 @@ regularTilingRadius = (n,m)->
     len = Math.sqrt(chc*chc-1.0)/(1.0+chc)
     return len
 
-regularTiling = (n,m,stop)->
+regularTiling = (n,m,stop,adjacency=false)->
 
     reflectSide = (poly,vs,i)->
         {c: c, v: v, t: t, hop: hop} = poly
@@ -410,14 +410,14 @@ regularTiling = (n,m,stop)->
     len = regularTilingRadius(n,m)
     tovisit = [ { c: Complex.zero, v: new Complex(len,0.0), t: new Isometry(), hop: 0 } ]
 
-    visited = d3.set()
+    visited = d3.map()
     polygons = []
 
     while tovisit.length>0
         p = tovisit.shift()
         if !visited.has(p.c)
-            visited.add(p.c)
             if !stop(p)
+                visited.set(p.c, polygons.length)
                 polygons.push(p)
                 vs = regularPolygon(p.c,p.v,n)
                 for i in [0...n]
