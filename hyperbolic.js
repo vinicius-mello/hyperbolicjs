@@ -569,6 +569,7 @@
         }
       }
     }
+    adjacency = true;
     if (adjacency) {
       console.log("1");
       for (k = 0, len1 = polygons.length; k < len1; k++) {
