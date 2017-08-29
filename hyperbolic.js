@@ -569,12 +569,9 @@
         }
       }
     }
-    adjacency = true;
     if (adjacency) {
-      console.log("1");
       for (k = 0, len1 = polygons.length; k < len1; k++) {
         p = polygons[k];
-        console.log("2");
         vs = regularPolygon(p.c, p.v, n);
         p.adjacency = [];
         for (i = u = 0, ref1 = n; 0 <= ref1 ? u < ref1 : u > ref1; i = 0 <= ref1 ? ++u : --u) {
