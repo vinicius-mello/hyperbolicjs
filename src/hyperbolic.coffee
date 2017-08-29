@@ -422,7 +422,6 @@ regularTiling = (n,m,stop,adjacency=false)->
                 vs = regularPolygon(p.c,p.v,n)
                 for i in [0...n]
                     tovisit.push(reflectSide(p,vs,i))
-
     if adjacency
         for p in polygons
             vs = regularPolygon(p.c,p.v,n)
