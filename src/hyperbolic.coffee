@@ -473,6 +473,7 @@ root.regularPolygonSVG = regularPolygonSVG
 root.polygonSVG = polygonSVG
 root.svg = svg
 root.distance = distance
+root.midpoint = midpoint
 root.regularTiling = regularTiling
 root.regularTilingRadius = regularTilingRadius
 root.delaunayEmbedding = delaunayEmbedding
