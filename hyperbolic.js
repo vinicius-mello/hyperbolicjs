@@ -647,7 +647,13 @@
   root.svg = svg;
 
   root.distance = distance;
+  
+  root.translate0 = translate0;
+  
+  root.translate0Inv = translate0Inv;
 
+  root.midpoint0 = midpoint0;
+  
   root.midpoint = midpoint;
   
   root.midpointIdeal = midpointIdeal;
