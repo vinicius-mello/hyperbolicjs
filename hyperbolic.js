@@ -649,6 +649,16 @@
   root.distance = distance;
 
   root.midpoint = midpoint;
+  
+  root.midpointIdeal = midpointIdeal;
+  
+  root.line = line;
+  
+  root.lineCenter = lineCenter;
+  
+  root.ray = ray;
+  
+  root.perpBisector = perpBisector;
 
   root.regularTiling = regularTiling;
 
